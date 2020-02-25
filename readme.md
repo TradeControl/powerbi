@@ -4,18 +4,14 @@ Reporting services for the [Trade Control](https://github.com/tradecontrol/tc-no
 
 ## Overview
 
-Power BI is Microsoft's environment for publishing important analytical data to mobile phones, tablets and websites. It consists of three elements: Desktop to code the reports, Services to consume and distribute them, and Mobile. The Power BI template for Trade Control communicates several useful indicators and provides a basis for further development and customisation. Once published to the BI Service, users can interact with the information by creating their own dashboards and workspaces.
-
-## Installation
-
-Import [the template](src/tradecontrol.pbit) into Power BI Desktop and set the data source to your instance of Azure SQL. The template has been written for compatibility with all installations 3.24.1 or higher. 
-
-Follow the online instructions for publishing to the Power BI Service.
+The Power BI template for Trade Control presents users with Business Intelligence data. It communicates several useful indicators and provides a basis for further development and customisation. Once published to the BI Service, users can interact with the information by creating their own dashboards and workspaces on tablets and mobile phones.
 
 ## Template
 
 The template has separate pages for finance, statements and sales analysis. 
 
+> **NOTE**
+> 
 > The information presented in the following screenshots is [fictitious](#sample). 
 
 
@@ -47,6 +43,14 @@ You can click on any of the selection lists to splice the data, but you can also
 
 ![Sales Analysis](img/tc_powerbi_sales_analysis2.png)
 
+## Template Installation
+
+Power BI is Microsoft's environment for publishing important analytical data to mobile phones, tablets and websites. It consists of three elements: Desktop to code the reports, Services to consume and distribute them, and Mobile.
+
+Import [the template](src/tradecontrol.pbit) into Power BI Desktop and set the data source to your instance of Azure SQL. The template has been written for compatibility with all installations 3.24.1 or higher. 
+
+Follow the online instructions for publishing to the Power BI Service.
+
 ## Data
 
 After opening the [Trade Control PowerBI template](src/tradecontrol.pbit) you can create a PowerBI file for your own business. Select **Edit Queries/Data source Settings** to switch between different installations. 
@@ -70,7 +74,7 @@ A different result set is generated each time the script is executed on the same
 
 The sample data builds on the [Bill of Materials demo](https://github.com/tradecontrol/tc-office/blob/master/docs/tc_demo_manufacturing.md). The script implements the additional operations:
 
-1. Create six new products by copying M/00/70/00 representing the same product moulded in different colours. The plastic material is therefore altered, changing the cost. The prices are also arbitrarily altered to emphasise different gross profit margins.
+1. Create six new products by making M/00/70/00 in six different colours, altering the plastic material to change the costs. Arbitrarily alter selling prices generate different gross profit margins.
 2. Add five new users without administrative rights to represent the Sales Team
 3. Declare in-memory tables of area and sector codes for random assignment to new customers
 4. Assign the BOM Demo sales order to a member of the Sales Team and assign sector and area codes to the existing customer account
