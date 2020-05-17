@@ -47,7 +47,7 @@ You can click on any of the selection lists to splice the data, but you can also
 
 Power BI is Microsoft's environment for publishing important analytical data to mobile phones, tablets and websites. It consists of three elements: Desktop to code the reports, Services to consume and distribute them, and Mobile.
 
-Import [the template](src/tradecontrol.pbit) into Power BI Desktop and set the data source to your instance of Azure SQL. The template has been written for compatibility with all installations 3.24.1 or higher. 
+Import [the template](src/tradecontrol.pbit) into Power BI Desktop and set the data source to your instance of Azure SQL. The template has been written for compatibility with all installations 3.27.1 or higher. 
 
 Follow the online instructions for publishing to the Power BI Service.
 
@@ -74,7 +74,7 @@ A different result set is generated each time the script is executed on the same
 
 The sample data builds on the [Bill of Materials demo](https://github.com/tradecontrol/tc-office/blob/master/docs/tc_demo_manufacturing.md). The script implements the additional operations:
 
-1. Create six new products by making M/00/70/00 in six different colours, altering the plastic material to change the costs. Arbitrarily alter selling prices generate different gross profit margins.
+1. Create six new products by making M/00/70/00 in six different colours, altering the plastic material to change the costs. Arbitrarily alter selling prices to generate different gross profit margins.
 2. Add five new users without administrative rights to represent the Sales Team
 3. Declare in-memory tables of area and sector codes for random assignment to new customers
 4. Assign the BOM Demo sales order to a member of the Sales Team and assign sector and area codes to the existing customer account
@@ -88,5 +88,10 @@ The sample data builds on the [Bill of Materials demo](https://github.com/tradec
 
 The Trade Control licence is issued by Trade Control Ltd under [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html) 
 
+
+## Author
+
+Ian Monnox
+&nbsp; [GitHub](https://github.com/iamonnox)
 
 

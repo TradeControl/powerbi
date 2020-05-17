@@ -45,9 +45,12 @@ DECLARE @tbSectors TABLE (SectorId smallint, IndustrySector nvarchar(50));
 
 BEGIN TRY
 
-	EXEC App.proc_DemoBom @CreateOrders = 1, @InvoiceOrders = 1, @PayInvoices = 0;
+	IF NOT EXISTS (SELECT * from App.vwVersion WHERE SQLDataVersion >= 3.27)
+		THROW 50000, 'Version incompatible with script', 1; 
 
-	INSERT INTO Activity.tbActivity (ActivityCode, TaskStatusCode, DefaultText, UnitOfMeasure, CashCode, UnitCharge, Printed, RegisterName)
+	EXEC App.proc_DemoBom @CreateOrders = 1, @InvoiceOrders = 0, @PayInvoices = 0;
+
+	INSERT INTO Activity.tbActivity (ActivityCode, TaskStatusCode, ActivityDescription, UnitOfMeasure, CashCode, UnitCharge, Printed, RegisterName)
 	VALUES ('M/00/70/01', 1, 'PIGEON HOLE SHELF ASSEMBLY WHITE', 'each', '103', 18.3240, 1, 'Sales Order')
 	, ('M/100/70/01', 1, 'PIGEON HOLE SUB SHELF WHITE', 'each', NULL, 0.0000, 0, 'Works Order')
 	, ('M/101/70/01', 1, 'PIGEON HOLE BACK DIVIDER', 'each', NULL, 0.0000, 0, 'Works Order')
@@ -160,7 +163,7 @@ BEGIN TRY
 
 	/**********************************************************************************************************/
 
-	INSERT INTO Activity.tbActivity (ActivityCode, TaskStatusCode, DefaultText, UnitOfMeasure, CashCode, UnitCharge, Printed, RegisterName)
+	INSERT INTO Activity.tbActivity (ActivityCode, TaskStatusCode, ActivityDescription, UnitOfMeasure, CashCode, UnitCharge, Printed, RegisterName)
 	VALUES ('M/00/70/02', 1, 'PIGEON HOLE SHELF ASSEMBLY BLUE', 'each', '103', 17.500, 1, 'Sales Order')
 	, ('M/100/70/02', 1, 'PIGEON HOLE SUB SHELF BLUE', 'each', NULL, 0.0000, 0, 'Works Order')
 	, ('M/101/70/02', 1, 'PIGEON HOLE BACK DIVIDER', 'each', NULL, 0.0000, 0, 'Works Order')
@@ -273,7 +276,7 @@ BEGIN TRY
 
 	/***********************************************************************************/
 
-	INSERT INTO Activity.tbActivity (ActivityCode, TaskStatusCode, DefaultText, UnitOfMeasure, CashCode, UnitCharge, Printed, RegisterName)
+	INSERT INTO Activity.tbActivity (ActivityCode, TaskStatusCode, ActivityDescription, UnitOfMeasure, CashCode, UnitCharge, Printed, RegisterName)
 	VALUES ('M/00/70/03', 1, 'PIGEON HOLE SHELF ASSEMBLY GREEN', 'each', '103', 14.2240, 1, 'Sales Order')
 	, ('M/100/70/03', 1, 'PIGEON HOLE SUB SHELF GREEN', 'each', NULL, 0.0000, 0, 'Works Order')
 	, ('M/101/70/03', 1, 'PIGEON HOLE BACK DIVIDER', 'each', NULL, 0.0000, 0, 'Works Order')
@@ -386,7 +389,7 @@ BEGIN TRY
 
 	/**********************************************************************************************************/
 
-	INSERT INTO Activity.tbActivity (ActivityCode, TaskStatusCode, DefaultText, UnitOfMeasure, CashCode, UnitCharge, Printed, RegisterName)
+	INSERT INTO Activity.tbActivity (ActivityCode, TaskStatusCode, ActivityDescription, UnitOfMeasure, CashCode, UnitCharge, Printed, RegisterName)
 	VALUES ('M/00/70/04', 1, 'PIGEON HOLE SHELF ASSEMBLY GREY', 'each', '103', 12.10, 1, 'Sales Order')
 	, ('M/100/70/04', 1, 'PIGEON HOLE SUB SHELF GREY', 'each', NULL, 0.0000, 0, 'Works Order')
 	, ('M/101/70/04', 1, 'PIGEON HOLE BACK DIVIDER', 'each', NULL, 0.0000, 0, 'Works Order')
@@ -499,7 +502,7 @@ BEGIN TRY
 
 	/**********************************************************************************************************/
 
-	INSERT INTO Activity.tbActivity (ActivityCode, TaskStatusCode, DefaultText, UnitOfMeasure, CashCode, UnitCharge, Printed, RegisterName)
+	INSERT INTO Activity.tbActivity (ActivityCode, TaskStatusCode, ActivityDescription, UnitOfMeasure, CashCode, UnitCharge, Printed, RegisterName)
 	VALUES ('M/00/70/05', 1, 'PIGEON HOLE SHELF ASSEMBLY RED', 'each', '103', 18.0200, 1, 'Sales Order')
 	, ('M/100/70/05', 1, 'PIGEON HOLE SUB SHELF RED', 'each', NULL, 0.0000, 0, 'Works Order')
 	, ('M/101/70/05', 1, 'PIGEON HOLE BACK DIVIDER', 'each', NULL, 0.0000, 0, 'Works Order')
@@ -612,7 +615,7 @@ BEGIN TRY
 
 	/***********************************************************************************/
 
-	INSERT INTO Activity.tbActivity (ActivityCode, TaskStatusCode, DefaultText, UnitOfMeasure, CashCode, UnitCharge, Printed, RegisterName)
+	INSERT INTO Activity.tbActivity (ActivityCode, TaskStatusCode, ActivityDescription, UnitOfMeasure, CashCode, UnitCharge, Printed, RegisterName)
 	VALUES ('M/00/70/06', 1, 'PIGEON HOLE SHELF ASSEMBLY YELLOW', 'each', '103', 14.530, 1, 'Sales Order')
 	, ('M/100/70/06', 1, 'PIGEON HOLE SUB SHELF YELLOW', 'each', NULL, 0.0000, 0, 'Works Order')
 	, ('M/101/70/06', 1, 'PIGEON HOLE BACK DIVIDER', 'each', NULL, 0.0000, 0, 'Works Order')
@@ -780,21 +783,28 @@ BEGIN TRY
 		END
 
 		SET @AccountName = CONCAT('CUSTOMER ', FORMAT(@CustCounter, '00'));
-		EXEC Org.proc_DefaultAccountCode @AccountName, @AccountCode OUTPUT
-		EXEC Org.proc_NextAddressCode @AccountCode, @AddressCode OUTPUT
-		INSERT INTO Org.tbOrg (AccountCode, AccountName, OrganisationTypeCode, OrganisationStatusCode, TaxCode, AddressCode, AreaCode, PaymentTerms, ExpectedDays, PaymentDays, PayDaysFromMonthEnd, PayBalance, NumberOfEmployees, EUJurisdiction)
-		VALUES (@AccountCode,@AccountName, 1, 1, 'T1',@AddressCode,@AreaCode, '30 days from invoice', 5, 30, 0, 1, 0, CASE WHEN @AreaCode = 'EUROPE' THEN 1 ELSE 0 END)
+		IF (NOT EXISTS(SELECT * FROM Org.tbOrg WHERE AccountName = @AccountName))
+		BEGIN
+			EXEC Org.proc_DefaultAccountCode @AccountName, @AccountCode OUTPUT
+			EXEC Org.proc_NextAddressCode @AccountCode, @AddressCode OUTPUT
+			INSERT INTO Org.tbOrg (AccountCode, AccountName, OrganisationTypeCode, OrganisationStatusCode, TaxCode, AddressCode, AreaCode, PaymentTerms, ExpectedDays, PaymentDays, PayDaysFromMonthEnd, PayBalance, NumberOfEmployees, EUJurisdiction)
+			VALUES (@AccountCode,@AccountName, 1, 1, 'T1',@AddressCode,@AreaCode, '30 days from invoice', 5, 30, 0, 1, 0, CASE WHEN @AreaCode = 'EUROPE' THEN 1 ELSE 0 END)
 
-		INSERT INTO Org.tbAddress (AddressCode, AccountCode, Address)
-		VALUES (@AddressCode, @AccountCode, @AreaCode);
+			INSERT INTO Org.tbAddress (AddressCode, AccountCode, Address)
+			VALUES (@AddressCode, @AccountCode, @AreaCode);
 
-		INSERT INTO Org.tbSector (AccountCode, IndustrySector) VALUES (@AccountCode, @IndustrySector);
+			INSERT INTO Org.tbSector (AccountCode, IndustrySector) VALUES (@AccountCode, @IndustrySector);
+		END
+		ELSE
+		BEGIN
+			SELECT @AccountCode = AccountCode FROM Org.tbOrg WHERE AccountName = @AccountName;
+		END
 
 		SELECT @UserId = UserId FROM Usr.vwCredentials;
 		EXEC Task.proc_NextCode 'PROJECT', @ParentTaskCode OUTPUT
 		INSERT INTO Task.tbTask
-								 (TaskCode, UserId, AccountCode, TaskTitle, ActivityCode, TaskStatusCode, ActionById)
-		VALUES        (@ParentTaskCode, @UserId, @AccountCode, N'PIGEON HOLE SHELF ASSEMBLY', N'PROJECT', 0, @UserId)
+								 (TaskCode, UserId, AccountCode, TaskTitle, ActivityCode, TaskStatusCode, ActionById, ActionOn)
+		VALUES        (@ParentTaskCode, @UserId, @AccountCode, N'PIGEON HOLE SHELF ASSEMBLY', N'PROJECT', 0, @UserId, CAST(CURRENT_TIMESTAMP AS DATE))
 
 		SET @ProdCounter = 0;  
 		SELECT @MaxOrders = COUNT(*) FROM App.tbYearPeriod WHERE StartOn < CURRENT_TIMESTAMP;
@@ -834,26 +844,26 @@ BEGIN TRY
 			SET @ProdCounter += 1  
 		END;  
 
+		UPDATE Task.tbTask
+		SET AccountCode = 'PACSER', ContactName = 'John OGroats', AddressCodeFrom = 'PACSER_001' --, AddressCodeTo = 'PACSER_001'
+		WHERE ActivityCode = 'BOX/41' AND TaskStatusCode = 1 --AND AccountCode = @AccountCode;
 
 		UPDATE Task.tbTask
-		SET AccountCode = 'PACSER', ContactName = 'John OGroats', AddressCodeFrom = 'PACSER_001', AddressCodeTo = 'PACSER_001'
-		WHERE ActivityCode = 'BOX/41' AND AccountCode = @AccountCode;
+		SET AccountCode = 'TFCSPE', ContactName = 'Gary Granger', AddressCodeFrom = 'TFCSPE_001' --, AddressCodeTo = 'TFCSPE_001'
+		WHERE ActivityCode = 'INSERT/09' AND TaskStatusCode = 1 --AND AccountCode = @AccountCode;
 
 		UPDATE Task.tbTask
-		SET AccountCode = 'TFCSPE', ContactName = 'Gary Granger', AddressCodeFrom = 'TFCSPE_001', AddressCodeTo = 'TFCSPE_001'
-		WHERE ActivityCode = 'INSERT/09' AND AccountCode = @AccountCode;
+		SET AccountCode = 'PALSUP', ContactName = 'Allan Rain', AddressCodeFrom = 'PALSUP_001', CashCode = NULL, UnitCharge = 0 --, AddressCodeTo = 'PALSUP_001'
+		WHERE ActivityCode = 'PALLET/01' AND TaskStatusCode = 1 --AND AccountCode = @AccountCode;
 
 		UPDATE Task.tbTask
-		SET AccountCode = 'PALSUP', ContactName = 'Allan Rain', AddressCodeFrom = 'PALSUP_001', AddressCodeTo = 'PALSUP_001', CashCode = NULL, UnitCharge = 0
-		WHERE ActivityCode = 'PALLET/01' AND AccountCode = @AccountCode;
-
-		UPDATE Task.tbTask
-		SET AccountCode = 'PLAPRO', ContactName = 'Kim Burnell', AddressCodeFrom = 'PLAPRO_001', AddressCodeTo = 'PLAPRO_001'
-		WHERE (ActivityCode LIKE N'PC/%') AND (AccountCode = @AccountCode);
+		SET AccountCode = 'PLAPRO', ContactName = 'Kim Burnell', AddressCodeFrom = 'PLAPRO_001' --, AddressCodeTo = 'PLAPRO_001'
+		WHERE (ActivityCode LIKE N'PC/%') AND TaskStatusCode = 1 --AND (AccountCode = @AccountCode);
 		
 		UPDATE Task.tbTask
-		SET AccountCode = 'HAULOG', ContactName = 'John Iron',  AddressCodeFrom = 'HOME_001', AddressCodeTo = @AddressCode, Quantity = 1, UnitCharge = 250, TotalCharge = 250
-		WHERE ActivityCode = 'DELIVERY' AND AccountCode = @AccountCode;
+		SET AccountCode = 'HAULOG', ContactName = 'John Iron',  AddressCodeFrom = 'HOME_001', Quantity = 1, UnitCharge = 250, TotalCharge = 250 --, AddressCodeTo = @AddressCode 
+		WHERE ActivityCode = 'DELIVERY' AND TaskStatusCode = 1 --AND AccountCode = @AccountCode;
+
 
 		UPDATE Task.tbTask
 		SET AccountCode = (SELECT AccountCode FROM App.tbOptions), ContactName = (SELECT UserName FROM Usr.vwCredentials)
@@ -893,9 +903,9 @@ BEGIN TRY
 			EXEC Invoice.proc_Raise @TaskCode = @TaskCode, @InvoiceTypeCode = @InvoiceTypeCode, @InvoicedOn = @InvoicedOn, @InvoiceNumber = @InvoiceNumber OUTPUT;
 			EXEC Invoice.proc_Accept @InvoiceNumber;
 
-			UPDATE Task.tbTask
-			SET ActionedOn = ActionOn, TaskStatusCode = 3
-			WHERE TaskCode = @TaskCode;
+			--UPDATE Task.tbTask
+			--SET ActionedOn = ActionOn, TaskStatusCode = 3
+			--WHERE TaskCode = @TaskCode;
 
 			FETCH NEXT FROM wf INTO @TaskCode
 		END
