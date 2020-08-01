@@ -6,6 +6,8 @@ Reporting services for the [Trade Control](https://github.com/tradecontrol/tc-no
 
 The Power BI template for Trade Control presents users with Business Intelligence data. It communicates several useful indicators and provides a basis for further development and customisation. Once published to the BI Service, users can interact with the information by creating their own dashboards and workspaces on tablets and mobile phones.
 
+The template also works with [bitcoin as unit of account](https://github.com/tradecontrol/tc-bitcoin).
+
 ## Template
 
 The template has separate pages for finance, statements and sales analysis. 
@@ -86,12 +88,11 @@ The sample data builds on the [Bill of Materials demo](https://github.com/tradec
 
 ## Licence
 
-The Trade Control licence is issued by Trade Control Ltd under [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html) 
+The Trade Control Code licence is issued by Trade Control Ltd under a [GNU General Public Licence v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html) 
 
+Trade Control Documentation by Trade Control Ltd is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/) 
 
-## Author
+![Creative Commons](https://i.creativecommons.org/l/by-sa/4.0/88x31.png) 
 
-Ian Monnox
-&nbsp; [GitHub](https://github.com/iamonnox)
 
 

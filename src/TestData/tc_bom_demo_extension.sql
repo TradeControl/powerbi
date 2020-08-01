@@ -920,11 +920,11 @@ BEGIN TRY
 
 	EXEC Cash.proc_CurrentAccount @CashAccountCode OUTPUT;
 
-	INSERT INTO Org.tbPayment (CashAccountCode, PaymentCode, UserId, AccountCode, PaidOn, PaidInValue, PaidOutValue)
-	SELECT @CashAccountCode CashAccountCode, CONCAT(AccountCode,'_', FORMAT(PaidOn, 'yyyyMMdd')) PaymentCode, @UserId UserId, AccountCode, PaidOn, PaidInValue, PaidOutValue
+	INSERT INTO Cash.tbPayment (CashAccountCode, PaymentCode, UserId, AccountCode, PaidOn, PaidInValue, PaidOutValue)
+	SELECT @CashAccountCode CashAccountCode, CONCAT(AccountCode,'_', FORMAT(PaidOn, 'yyyyMMdd'), '_', PaymentId) PaymentCode, @UserId UserId, AccountCode, PaidOn, PaidInValue, PaidOutValue
 	FROM 
 	(
-		SELECT AccountCode, PaidOn, ROUND(SUM(PaidInValue), 2) PaidInValue, ROUND(SUM(PaidOutValue), 2) PaidOutValue
+		SELECT AccountCode, PaidOn, ROUND(SUM(PaidInValue), 2) PaidInValue, ROUND(SUM(PaidOutValue), 2) PaidOutValue, ROW_NUMBER() OVER (ORDER BY PaidOn) PaymentId
 		FROM 
 		(
 			SELECT        AccountCode, EOMONTH(ExpectedOn) PaidOn, 
@@ -936,7 +936,7 @@ BEGIN TRY
 		GROUP BY AccountCode, PaidOn
 	) payments;
 
-	EXEC Org.proc_PaymentPost;	
+	EXEC Cash.proc_PaymentPost;	
 
 	IF NOT EXISTS(SELECT * FROM Org.tbOrg WHERE AccountCode = @AccountCode)
 	BEGIN
@@ -949,8 +949,8 @@ BEGIN TRY
 	SELECT @AccountCode = (SELECT MAX(AccountCode) FROM Cash.tbTaxType WHERE NOT AccountCode IS NULL);
 	EXEC Cash.proc_CurrentAccount @CashAccountCode OUTPUT;
 
-	INSERT INTO Org.tbPayment (CashAccountCode, PaymentCode, UserId, AccountCode, PaidOn, PaidInValue, PaidOutValue, CashCode, TaxCode)
-	SELECT @CashAccountCode CashAccountCode, CONCAT(@AccountCode, '_', FORMAT(PaidOn, 'yyyyMMdd')) PaymentCode, @UserId UserId, @AccountCode AccountCode, PaidOn, 0 AS PaidInValue, PaidOutValue, CashCode, TaxCode
+	INSERT INTO Cash.tbPayment (CashAccountCode, PaymentCode, UserId, AccountCode, PaidOn, PaidInValue, PaidOutValue, CashCode, TaxCode)
+	SELECT @CashAccountCode CashAccountCode, CONCAT(@AccountCode, '_', FORMAT(PaidOn, 'yyyyMMdd'), '_', ROW_NUMBER() OVER (ORDER BY PaidOn)) PaymentCode, @UserId UserId, @AccountCode AccountCode, PaidOn, 0 AS PaidInValue, PaidOutValue, CashCode, TaxCode
 	FROM
 	(
 		SELECT DATEADD(DAY, -1, StartOn) PaidOn, ROUND(VatDue, 2) PaidOutValue, (SELECT CashCode FROM Cash.tbTaxType WHERE TaxTypeCode = 1) CashCode, 'N/A' TaxCode
@@ -962,7 +962,7 @@ BEGIN TRY
 		WHERE StartOn < CURRENT_TIMESTAMP AND TaxDue > 0
 	) tax
 
-	EXEC Org.proc_PaymentPost;
+	EXEC Cash.proc_PaymentPost;
 	EXEC App.proc_SystemRebuild;
 
 END TRY
