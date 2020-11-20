@@ -1,12 +1,12 @@
 # Trade Control - Power BI
 
-Reporting services for the [Trade Control](https://github.com/tradecontrol/tc-nodecore) management information system.
+Reporting services for the [Trade Control](https://github.com/tradecontrol/sqlnode) management information system.
 
 ## Overview
 
 The Power BI template for Trade Control presents users with Business Intelligence data. It communicates several useful indicators and provides a basis for further development and customisation. Once published to the BI Service, users can interact with the information by creating their own dashboards and workspaces on tablets and mobile phones.
 
-The template also works with [bitcoin as unit of account](https://github.com/tradecontrol/tc-bitcoin).
+The template also works with [bitcoin as unit of account](https://github.com/tradecontrol/bitcoin).
 
 ## Template
 
@@ -19,7 +19,7 @@ The template has separate pages for finance, statements and sales analysis.
 
 ### Finance
 
-The underlying data for this page is taken from unaggregated Sql Server views, also presented in the [Office 365 interface](https://github.com/tradecontrol/tc-office).
+The underlying data for this page is taken from unaggregated Sql Server views, also presented in the [Office 365 interface](https://github.com/tradecontrol/office).
 
 Trade Control calculates the tax burden with transaction grained frequency. Because it also reconciles to cash accounts that can mirror money in the bank, it is possible to report on the real-time financial health of the business.
 
@@ -65,16 +65,16 @@ The richness of Business Intelligence reporting depends upon large datasets, bui
  
 ### Installation
 
-First, install Trade Control onto an Azure SQL instance and [configure a basic setup](https://github.com/TradeControl/tc-nodecore/blob/master/docs/tc_nodecore_config.md#basic-setup). There are then two ways to generate the data:
+First, install Trade Control onto an Azure SQL instance and [configure a basic setup](https://github.com/TradeControl/sqlnode/blob/master/docs/tc_nodecore_config.md#basic-setup). There are then two ways to generate the data:
 
 - Open [the script](src/TestData/tc_bom_demo_extension.sql) in SSMS and execute directly
 - From Visual Studio, open the TestData.sqlproj and execute from inside the IDE
 
-A different result set is generated each time the script is executed on the same instance. That is because areas, products and sectors are randomly applied to both customers and the sales team using the ```RAND()``` function. The amount of data generated can be altered by adding additional historical financial years in the [Administration form](https://github.com/tradecontrol/tc-office), setting the status to Closed; and by modifying the ```@MaxCustomers smallint = 20``` declaration at the top of the script.
+A different result set is generated each time the script is executed on the same instance. That is because areas, products and sectors are randomly applied to both customers and the sales team using the ```RAND()``` function. The amount of data generated can be altered by adding additional historical financial years in the [Administration form](https://github.com/tradecontrol/office), setting the status to Closed; and by modifying the ```@MaxCustomers smallint = 20``` declaration at the top of the script.
 
 ### Script
 
-The sample data builds on the [Bill of Materials demo](https://github.com/tradecontrol/tc-office/blob/master/docs/tc_demo_manufacturing.md). The script implements the additional operations:
+The sample data builds on the [Bill of Materials demo](https://github.com/tradecontrol/office/blob/master/docs/tc_demo_manufacturing.md). The script implements the additional operations:
 
 1. Create six new products by making M/00/70/00 in six different colours, altering the plastic material to change the costs. Arbitrarily alter selling prices to generate different gross profit margins.
 2. Add five new users without administrative rights to represent the Sales Team
