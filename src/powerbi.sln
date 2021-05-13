@@ -5,6 +5,7 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7BBF1F41-592D-454B-8325-0493F94FC262}"
 	ProjectSection(SolutionItems) = preProject
+		..\changelog.md = ..\changelog.md
 		..\readme.md = ..\readme.md
 		..\img\tc_powerbi_financial.png = ..\img\tc_powerbi_financial.png
 		..\img\tc_powerbi_statement.png = ..\img\tc_powerbi_statement.png

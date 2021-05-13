@@ -4,6 +4,8 @@ Reporting services for the [Trade Control](https://github.com/tradecontrol/sqlno
 
 First published 3 February 2020
 
+- [change log](changelog.md)
+
 ## Documentation
 
 - [installation](https://tradecontrol.github.io/tutorials/installing-powerbi)
