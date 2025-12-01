@@ -1,14 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36511.14 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7BBF1F41-592D-454B-8325-0493F94FC262}"
 	ProjectSection(SolutionItems) = preProject
-		..\changelog.md = ..\changelog.md
+		..\docs\changelog.md = ..\docs\changelog.md
+		..\docs\installation.md = ..\docs\installation.md
+		..\docs\powerbi.md = ..\docs\powerbi.md
 		..\readme.md = ..\readme.md
-		..\img\tc_powerbi_financial.png = ..\img\tc_powerbi_financial.png
-		..\img\tc_powerbi_statement.png = ..\img\tc_powerbi_statement.png
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{3EECE65B-930C-4FD4-B796-6C314A87CBDE}"
