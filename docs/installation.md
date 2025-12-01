@@ -24,8 +24,8 @@ The richness of Business Intelligence reporting depends upon large datasets, bui
 
 First, install Trade Control onto an Azure SQL instance and [configure a basic setup](https://github.com/tradecontrol/sqlnode). There are then two ways to generate the data:
 
-- Open [the script](https://github.com/tradecontrl/powerbi/blob/mastersrc/TestData/tc_bom_demo_extension.sql) in SSMS and execute directly
-- From Visual Studio, open the cloned [TestData.sqlproj](https://github.com/tradecontrol/powerbi/) and execute from inside the IDE
+- Open [the script](https://github.com/TradeControl/powerbi/blob/master/src/TestData/tc_bom_demo_extension.sql) in SSMS and execute directly
+- From Visual Studio, open the cloned TestData.sqlproj and execute from inside the IDE
 
 A different result set is generated each time the script is executed on the same instance. That is because areas, products and sectors are randomly applied to both customers and the sales team using the ```RAND()``` function. The amount of data generated can be altered by adding additional historical financial years in the Administration form, setting the status to Closed; and by modifying the ```@MaxCustomers smallint = 20``` declaration at the top of the script.
 
